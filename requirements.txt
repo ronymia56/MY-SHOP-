@@ -1,5 +1,4 @@
-aiogram==2.25.1
+aiogram
 flask
 openpyxl
-aiohttp==3.8.5
-charset-normalizer==3.1.0
+aiohttp
