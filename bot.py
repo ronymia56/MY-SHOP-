@@ -3,26 +3,23 @@ import os
 import json
 import threading
 from flask import Flask
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.storage.memory import MemoryStorage
+from openpyxl import load_workbook, Workbook
 
 # ================= RENDER SERVER =================
 app = Flask(__name__)
 @app.route('/')
 def home(): return "Bot is alive!"
 def run_flask(): app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-# এরপর আপনার বাকি ইমপোর্টগুলো...
-from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
-
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.memory import MemoryStorage
-
-from openpyxl import load_workbook, Workbook
 
 # ================= CONFIG =================
 TOKEN = "8959503198:AAGXpkVYMqKn0n1NDh9c3HKgmHJI8PY4y0E"
-ADMIN_ID = 2106634618  # আপনার সঠিক টেলিগ্রাম আইডি দিন
-
+ADMIN_ID = 2106634618
 bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
