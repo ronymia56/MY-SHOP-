@@ -253,10 +253,17 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
         )
 
     # --- ADMIN BUTTON HANDLERS ---
-    elif data == "admin":
-        if call.from_user.id != ADMIN_ID: return
-        await call.message.edit_text("⚙️ **ADMIN CONTROL PANEL**", reply_markup=admin_panel())
-
+    # --- ADMIN BUTTON HANDLERS ---
+elif data == "admin":
+    # টেলিগ্রামকে জানান বাটনটি ক্লিক হয়েছে
+    await call.answer() 
+    
+    # আইডি চেক
+    if call.from_user.id != ADMIN_ID: 
+        await call.message.answer("আপনি অ্যাডমিন নন!")
+        return
+        
+    await call.message.edit_text("⚙️ **ADMIN CONTROL PANEL**", reply_markup=...)
     elif data == "admin_upload":
         await call.message.edit_text(
             "📂 **কোন ক্যাটাগরির স্টক ফাইল আপলোড করতে চান?**",
