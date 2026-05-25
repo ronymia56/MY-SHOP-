@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from flask import Flask
 from threading import Thread
 
-API_TOKEN = 'YOUR_BOT_TOKEN_HERE' # আপনার টোকেন এখানে দিন
+API_TOKEN = '8959503198:AAGXpkVYMqKn0n1NDh9c3HKgmHJI8PY4y0E' # আপনার টোকেন এখানে দিন
 
 logging.basicConfig(level=logging.INFO)
 
