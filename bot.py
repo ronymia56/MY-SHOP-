@@ -180,13 +180,15 @@ async def upload_stock(message: types.Message, state: FSMContext):
         await message.answer(f"❌ **Upload Failed!** Error: `{e}`", reply_markup=admin_panel())
         await state.clear()
 
-# ================= CALLBACKS =================
-@dp.callback_query()
-async def callback(call: types.CallbackQuery, state: FSMContext):
-    data = call.data
-    user_id = str(call.from_user.id)
-    name = call.from_user.full_name
-    await call.answer()
+elif data == "admin":
+        if call.from_user.id != ADMIN_ID:
+            await call.answer("❌ দুঃখিত! এই বাটনটি শুধুমাত্র অ্যাডমিনের জন্য।", show_alert=True)
+            return
+        
+        await call.message.edit_text(
+            "🔒 **ADMIN CONTROL PANEL**", 
+            reply_markup=admin_panel() 
+        )
 
     if data == "balance":
         await call.message.edit_text(
