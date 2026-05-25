@@ -252,16 +252,17 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
             parse_mode="Markdown"
         )
 
-    # --- ADMIN BUTTON HANDLERS ---
-    # --- ADMIN BUTTON HANDLERS ---
-elif data == "admin":
-    # টেলিগ্রামকে জানান বাটনটি ক্লিক হয়েছে
-    await call.answer() 
-    
-    # আইডি চেক
-    if call.from_user.id != ADMIN_ID: 
-        await call.message.answer("আপনি অ্যাডমিন নন!")
-        return
+    elif data == "admin":
+        # আইডি চেক করার জন্য এই অংশটুকু ব্যবহার করো
+        if call.from_user.id != ADMIN_ID:
+            await call.answer("❌ দুঃখিত! এই বাটনটি শুধুমাত্র অ্যাডমিনের জন্য।", show_alert=True)
+            return
+        
+        # অ্যাডমিন হলে কন্ট্রোল প্যানেল দেখাবে
+        await call.message.edit_text(
+            "🔒 **ADMIN CONTROL PANEL**", 
+            reply_markup=admin_main_menu() # তোমার অ্যাডমিন মেনুর ফাংশন
+        )
         
     await call.message.edit_text("⚙️ **ADMIN CONTROL PANEL**", reply_markup=...)
     elif data == "admin_upload":
