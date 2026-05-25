@@ -18,7 +18,7 @@ def home(): return "Bot is alive!"
 def run_flask(): app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
 
 # ================= CONFIG =================
-TOKEN = "8959503198:AAF7rdGMAiqOm4Y1QcOdYowOcfeOaYnBL4U"
+TOKEN = "8959503198:AAGXpkVYMqKn0n1NDh9c3HKgmHJI8PY4y0E"
 ADMIN_ID = 2106634618
 bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
@@ -180,15 +180,13 @@ async def upload_stock(message: types.Message, state: FSMContext):
         await message.answer(f"❌ **Upload Failed!** Error: `{e}`", reply_markup=admin_panel())
         await state.clear()
 
-elif data == "admin":
-        if call.from_user.id != ADMIN_ID:
-            await call.answer("❌ দুঃখিত! এই বাটনটি শুধুমাত্র অ্যাডমিনের জন্য।", show_alert=True)
-            return
-        
-        await call.message.edit_text(
-            "🔒 **ADMIN CONTROL PANEL**", 
-            reply_markup=admin_panel()
-        )
+# ================= CALLBACKS =================
+@dp.callback_query()
+async def callback(call: types.CallbackQuery, state: FSMContext):
+    data = call.data
+    user_id = str(call.from_user.id)
+    name = call.from_user.full_name
+    await call.answer()
 
     if data == "balance":
         await call.message.edit_text(
@@ -255,17 +253,17 @@ elif data == "admin":
         )
 
     elif data == "admin":
-        # আইডি চেক করার জন্য এই অংশটুকু ব্যবহার করো
+        # সাধারণ ইউজারদের জন্য অ্যালার্ট
         if call.from_user.id != ADMIN_ID:
             await call.answer("❌ দুঃখিত! এই বাটনটি শুধুমাত্র অ্যাডমিনের জন্য।", show_alert=True)
             return
         
         # অ্যাডমিন হলে কন্ট্রোল প্যানেল দেখাবে
         await call.message.edit_text(
-            "🔒 **ADMIN CONTROL PANEL**", 
-            reply_markup=admin_main_menu() # তোমার অ্যাডমিন মেনুর ফাংশন
+            "⚙️ **ADMIN CONTROL PANEL**", 
+            reply_markup=admin_panel()
         )
-       
+
     elif data == "admin_upload":
         await call.message.edit_text(
             "📂 **কোন ক্যাটাগরির স্টক ফাইল আপলোড করতে চান?**",
