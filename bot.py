@@ -263,8 +263,7 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
             "🔒 **ADMIN CONTROL PANEL**", 
             reply_markup=admin_main_menu() # তোমার অ্যাডমিন মেনুর ফাংশন
         )
-        
-    await call.message.edit_text("⚙️ **ADMIN CONTROL PANEL**", reply_markup=...)
+       
     elif data == "admin_upload":
         await call.message.edit_text(
             "📂 **কোন ক্যাটাগরির স্টক ফাইল আপলোড করতে চান?**",
