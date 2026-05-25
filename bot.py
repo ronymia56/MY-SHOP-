@@ -187,7 +187,7 @@ elif data == "admin":
         
         await call.message.edit_text(
             "🔒 **ADMIN CONTROL PANEL**", 
-            reply_markup=admin_panel() 
+            reply_markup=admin_panel()
         )
 
     if data == "balance":
