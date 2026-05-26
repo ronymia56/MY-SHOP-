@@ -373,6 +373,8 @@ async def dep_txnid(message: types.Message, state: FSMContext):
 
     await message.answer("⏳ **পেমেন্ট রিকোয়েস্ট সাবমিট হয়েছে!** এডমিন ভেরিফাই করার পর ব্যালেন্স এড হবে।", reply_markup=back_btn())
 
+    await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
+    
     admin_markup = InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(text="✅ Approve", callback_data=f"approve_{user_id}_{amount}"),
         InlineKeyboardButton(text="❌ Reject", callback_data=f"reject_{user_id}")
