@@ -1,5 +1,4 @@
 aiogram
-flask
-openpyxl
+aiohttp
 pymongo
-dnspython
+openpyxl
