@@ -253,16 +253,21 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
         )
 
     elif data == "admin":
-        # সাধারণ ইউজারদের জন্য অ্যালার্ট
+        await call.answer()  # বাটন ক্লিকের রেসপন্স
+        
+        # আইডি চেক
         if call.from_user.id != ADMIN_ID:
-            await call.answer("❌ দুঃখিত! এই বাটনটি শুধুমাত্র অ্যাডমিনের জন্য।", show_alert=True)
+            await call.answer("❌ দুঃখিত! আপনি অ্যাডমিন নন।", show_alert=True)
             return
         
-        # অ্যাডমিন হলে কন্ট্রোল প্যানেল দেখাবে
-        await call.message.edit_text(
-            "⚙️ **ADMIN CONTROL PANEL**", 
-            reply_markup=admin_panel()
-        )
+        # মেসেজ এডিট করার সময় এরর হ্যান্ডলিং
+        try:
+            await call.message.edit_text(
+                "⚙️ **ADMIN CONTROL PANEL**", 
+                reply_markup=admin_panel()
+            )
+        except Exception as e:
+            print(f"Error: {e}")
 
     elif data == "admin_upload":
         await call.message.edit_text(
