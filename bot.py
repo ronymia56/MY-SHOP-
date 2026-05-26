@@ -18,7 +18,7 @@ def home(): return "Bot is alive!"
 def run_flask(): app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
 
 # ================= CONFIG =================
-TOKEN = "8959503198:AAF7rdGMAiqOm4Y1QcOdYowOcfeOaYnBL4U"
+TOKEN = "8959503198:AAGLQg8tzCE5ErVHoiGam8I2Srh75S1c8QY"
 ADMIN_ID = 2106634618
 bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
