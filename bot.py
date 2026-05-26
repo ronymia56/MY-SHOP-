@@ -188,7 +188,9 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
     data    = call.data
     user_id = str(call.from_user.id)
     name    = call.from_user.full_name
-    await call.answer()
+    try:
+        await call.answer()
+    except: pass
 
     if data == "balance":
         await call.message.edit_text(
@@ -298,7 +300,7 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
         await call.message.edit_text(get_dashboard_text(name, user_id), reply_markup=main_menu(), parse_mode="Markdown")
 
     elif data.startswith("approve_"):
-        _, target_uid, amount = data.split("_")
+        parts = data.split("_", 2); target_uid, amount = parts[1], parts[2]
         add_balance(target_uid, amount)
         await call.message.edit_text(f"✅ **Deposit Approved!**\nUser `{target_uid}` কে `{amount} BDT` দেওয়া হয়েছে।", parse_mode="Markdown")
         try:
@@ -306,7 +308,7 @@ async def callback(call: types.CallbackQuery, state: FSMContext):
         except: pass
 
     elif data.startswith("reject_"):
-        _, target_uid = data.split("_")
+        parts = data.split("_", 1); target_uid = parts[1]
         await call.message.edit_text("❌ **Deposit Rejected!**", parse_mode="Markdown")
         try:
             await bot.send_message(target_uid, "❌ **Deposit Rejected!**\n\nYour transaction was invalid.", parse_mode="Markdown")
