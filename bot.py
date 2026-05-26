@@ -372,7 +372,6 @@ async def dep_txnid(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
 
     await message.answer("⏳ **পেমেন্ট রিকোয়েস্ট সাবমিট হয়েছে!** এডমিন ভেরিফাই করার পর ব্যালেন্স এড হবে।", reply_markup=back_btn())
-    
     admin_markup = InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(text="✅ Approve", callback_data=f"approve_{user_id}_{amount}"),
         InlineKeyboardButton(text="❌ Reject", callback_data=f"reject_{user_id}")
@@ -441,8 +440,7 @@ async def buy_amount(message: types.Message, state: FSMContext):
 async def main():
     threading.Thread(target=run_flask).start() # এটি সার্ভারটি ব্যাকগ্রাউন্ডে চালু রাখবে
     print("🔥 Shop Bot with Render Support Running...")
-    await dp.start_polling(bot, skip_updates=True)
-
+    
 await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
 
 if __name__ == "__main__":
