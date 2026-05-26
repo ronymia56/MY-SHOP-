@@ -17,8 +17,7 @@ TOKEN    = os.environ.get("BOT_TOKEN", "8959503198:AAGLQg8tzCE5ErVHoiGam8I2Srh75
 ADMIN_ID = 2106634618
 MONGO_URI = os.environ.get("MONGO_URI", "")
 
-# Render এ আপনার service URL (https://my-shop-0lkd.onrender.com)
-WEBHOOK_HOST = os.environ.get("RENDER_EXTERNAL_URL", "https://my-shop-0lkd.onrender.com")
+WEBHOOK_HOST = os.environ.get("RENDER_EXTERNAL_URL", "https://my-shop-0ikd.onrender.com")
 WEBHOOK_PATH = f"/webhook/{TOKEN}"
 WEBHOOK_URL  = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 PORT = int(os.environ.get("PORT", 10000))
@@ -435,11 +434,11 @@ async def buy_amount(message: types.Message, state: FSMContext):
     await state.clear()
 
 # ================= WEBHOOK RUN =================
-async def on_startup(app):
+async def on_startup(bot: Bot):
     await bot.set_webhook(WEBHOOK_URL)
     print(f"✅ Webhook set: {WEBHOOK_URL}")
 
-async def on_shutdown(app):
+async def on_shutdown(bot: Bot):
     await bot.delete_webhook()
     print("❌ Webhook deleted")
 
@@ -453,11 +452,11 @@ def main():
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
 
-    app.on_startup.append(on_startup)
-    app.on_shutdown.append(on_shutdown)
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
 
     print(f"🔥 Bot starting on port {PORT}...")
-    web.run_app(app, host="0.0.0.0", port=PORT)
+    web.run_app(app, host="0.0.0.0", port=PORT, handle_signals=True)
 
 if __name__ == "__main__":
     main()
