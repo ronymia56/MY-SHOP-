@@ -1,38 +1,37 @@
 import asyncio
 import os
 import io
-import threading
-from flask import Flask
+from aiohttp import web
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, BufferedInputFile
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from openpyxl import load_workbook, Workbook
 from pymongo import MongoClient
 
-# ================= RENDER SERVER =================
-app = Flask(__name__)
-@app.route('/')
-def home(): return "Bot is alive!"
-def run_flask(): app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-
 # ================= CONFIG =================
-TOKEN = os.environ.get("BOT_TOKEN", "8959503198:AAGLQg8tzCE5ErVHoiGam8I2Srh75S1c8QY")
+TOKEN    = os.environ.get("BOT_TOKEN", "8959503198:AAGLQg8tzCE5ErVHoiGam8I2Srh75S1c8QY")
 ADMIN_ID = 2106634618
-MONGO_URI = os.environ.get("MONGO_URI", "")  # MongoDB Atlas URI
+MONGO_URI = os.environ.get("MONGO_URI", "")
+
+# Render এ আপনার service URL (https://my-shop-0lkd.onrender.com)
+WEBHOOK_HOST = os.environ.get("RENDER_EXTERNAL_URL", "https://my-shop-0lkd.onrender.com")
+WEBHOOK_PATH = f"/webhook/{TOKEN}"
+WEBHOOK_URL  = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
+PORT = int(os.environ.get("PORT", 10000))
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher(storage=MemoryStorage())
+dp  = Dispatcher(storage=MemoryStorage())
 
 # ================= MONGODB SETUP =================
-client = MongoClient(MONGO_URI)
-mongo_db = client["fb_id_store"]
-
-users_col    = mongo_db["users"]     # balance
-settings_col = mongo_db["settings"]  # price
-stock_col    = mongo_db["stock"]     # ID stock
+client    = MongoClient(MONGO_URI)
+mongo_db  = client["fb_id_store"]
+users_col    = mongo_db["users"]
+settings_col = mongo_db["settings"]
+stock_col    = mongo_db["stock"]
 
 # ================= DATABASE FUNCTIONS =================
 def get_balance(user_id):
@@ -410,7 +409,6 @@ async def buy_amount(message: types.Message, state: FSMContext):
 
     add_balance(user_id, -total_price)
 
-    # Disk ছাড়া memory-তে Excel তৈরি
     wb = Workbook()
     ws = wb.active
     ws.append(["UID", "PASSWORD", "COOKIES"])
@@ -436,11 +434,30 @@ async def buy_amount(message: types.Message, state: FSMContext):
         await message.answer(f"❌ Delivery Error: `{e}`")
     await state.clear()
 
-# ================= RUN =================
-async def main():
-    threading.Thread(target=run_flask).start()
-    print("🔥 Bot Running with MongoDB...")
-    await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
+# ================= WEBHOOK RUN =================
+async def on_startup(app):
+    await bot.set_webhook(WEBHOOK_URL)
+    print(f"✅ Webhook set: {WEBHOOK_URL}")
+
+async def on_shutdown(app):
+    await bot.delete_webhook()
+    print("❌ Webhook deleted")
+
+async def health(request):
+    return web.Response(text="Bot is alive!")
+
+def main():
+    app = web.Application()
+    app.router.add_get("/", health)
+
+    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
+    setup_application(app, dp, bot=bot)
+
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
+
+    print(f"🔥 Bot starting on port {PORT}...")
+    web.run_app(app, host="0.0.0.0", port=PORT)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
