@@ -441,7 +441,7 @@ async def main():
     threading.Thread(target=run_flask).start() # এটি সার্ভারটি ব্যাকগ্রাউন্ডে চালু রাখবে
     print("🔥 Shop Bot with Render Support Running...")
     
-await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
+    await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
 
 if __name__ == "__main__":
     asyncio.run(main())
